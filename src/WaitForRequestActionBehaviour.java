@@ -30,8 +30,8 @@ public class WaitForRequestActionBehaviour extends CyclicBehaviour {
                 
                 // Process the updated state (if needed)
             }
-        } else {
-            block(); // Wait for messages
+        } else{
+           System.out.println("fefe");; // Wait for messages
         }
     }
 

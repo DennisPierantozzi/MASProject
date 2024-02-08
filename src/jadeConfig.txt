@@ -1,0 +1,7 @@
+# jadeConfig.txt
+# Enable ICP
+jade_core_mt_impl MultiThreadedIMTP
+
+# ICP Configuration
+jade_imtp_leap_jicp_host localhost
+jade_imtp_leap_jicp_port 8888

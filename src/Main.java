@@ -8,13 +8,19 @@ public class Main {
     public static void main(String[] args) {
         // Create the main container
         jade.core.Runtime runtime = jade.core.Runtime.instance();
-        Profile profile = new ProfileImpl();
-        profile.setParameter(Profile.CONTAINER_NAME, "MainContainer");
-        profile.setParameter(Profile.GUI, "true");
+        runtime.setCloseVM(true);
+        Profile profile = new ProfileImpl(null, 8888, null);
+        //profile.setParameter(Profile.CONTAINER_NAME, "MainContainer");
+        //profile.setParameter(Profile.GUI, "true");
         AgentContainer mainContainer = runtime.createMainContainer(profile);
+        System.out.println("ere");
 
         try {
-            // Start the SimulatorAgent
+            System.out.println("eere");
+            //gui to shut down the entire system !!!!!!!
+            AgentController rma = mainContainer.createNewAgent("rma", "jade.tools.rma.rma", new Object[0]);
+            rma.start();
+            //Start the SimulatorAgent
             AgentController simulatorAgentController = mainContainer.createNewAgent("simulatorAgent", "SimulatorAgent", null);
             simulatorAgentController.start();
 
@@ -25,7 +31,7 @@ public class Main {
             // Start the second RandomAgent
             AgentController randomAgent2Controller = mainContainer.createNewAgent("randomAgent2", "RandomAgent", new Object[]{10}); // Pass commitment parameter 10
             randomAgent2Controller.start();
-        } catch (StaleProxyException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
