@@ -1,14 +1,26 @@
 import java.util.LinkedList;
+import jade.core.Agent;
+
 
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 public class SimulationManagerBehaviour extends Behaviour {
+
+    private long startTime;
+    private long delay;
+    
+    public SimulationManagerBehaviour(long delay) {
+        this.delay = delay;
+    }
+
     
     public void action() {
 
         LinkedList<Participant> participants = ((SimulatorAgent)myAgent).getParticipants();
+        System.out.printf("ora è attaccato il simulator behaviour");
+        if (System.currentTimeMillis() - startTime >= delay) {
         
         while (!((SimulatorAgent)myAgent).simulationComplete())
         {
@@ -34,6 +46,7 @@ public class SimulationManagerBehaviour extends Behaviour {
                 mt = MessageTemplate.and(mt, MessageTemplate.MatchPerformative(ACLMessage.PROPOSE));
                 /* agent totally stops until receiving this type of message or no response in 10s, 
                    then assuming opportunity for response passed */
+                
                 ACLMessage msg = myAgent.blockingReceive(mt, 10000); 
                 if (msg != null)
                 {
@@ -72,7 +85,10 @@ public class SimulationManagerBehaviour extends Behaviour {
             // regardless of client agent's correspsonding commitment configurations
             ((SimulatorAgent)myAgent).checkMapMustChange();
         }
+        }
     }
+
+
 
     public boolean done() {
         return ((SimulatorAgent)myAgent).simulationComplete();
@@ -151,6 +167,7 @@ public class SimulationManagerBehaviour extends Behaviour {
         }
         else 
         {
+            System.out.println("posizione non valida pirla!");
             // invalid position, it remains where it is
             newPosition = participant.getSimulationState().getPosition();
         }
@@ -181,11 +198,12 @@ public class SimulationManagerBehaviour extends Behaviour {
     private boolean isValidMovement(Position pos, boolean avoidTraps)
     {
         boolean valid = true;
-
+        
         valid &= ((SimulatorAgent)myAgent).getCurrentMap().withinMapLimits(pos);
         if (avoidTraps)
             valid &= !((SimulatorAgent)myAgent).getCurrentMap().isTrapPosition(pos);
             
+        System.out.println("L'azione"+pos.toString()+"is:"+valid);
         return valid;
     }
 }

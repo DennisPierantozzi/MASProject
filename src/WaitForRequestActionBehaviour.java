@@ -1,39 +1,56 @@
 import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 
 public class WaitForRequestActionBehaviour extends CyclicBehaviour {
 
+
     @Override
     public void action() {
-        ACLMessage msg = myAgent.receive();
-        AID senderAID = msg.getSender();
-        if (msg != null) {
-            if (msg.getPerformative() == ACLMessage.REQUEST && msg.getConversationId().equals("request-action")) {
-                // Calculate random position
-                Position nextPosition = ((RandomAgent) myAgent).calculateRandomPosition();
+
+        try {
+            ACLMessage msg = myAgent.receive();
+            if (msg != null) {
+                AID senderAID = msg.getSender();
+                if (msg.getPerformative() == ACLMessage.REQUEST && msg.getConversationId().equals("request-action")) {
+                    // Calculate random position
+                    Position nextPosition = ((RandomAgent) myAgent).calculateRandomPosition();
+                    
+                    // Create PROPOSE/request-action message with the requested next Position
+                    ACLMessage proposeMsg = msg.createReply();
+                    proposeMsg.setPerformative(ACLMessage.PROPOSE);
+                    proposeMsg.addReceiver(senderAID); // Assuming you have the AID of the Simulator Agent
+                    proposeMsg.setInReplyTo(msg.getReplyWith());
+                    proposeMsg.setContentObject(nextPosition);
+                    
+                    // Send the proposeMsg
+                    myAgent.send(proposeMsg);
+                } else if (msg.getPerformative() == ACLMessage.INFORM && msg.getConversationId().equals("update-state")) {
+                    
+                    // update the simulationState of the agent
+                    try {
+                        SimulationState updatedState = (SimulationState) msg.getContentObject();
+                        ((RandomAgent) myAgent).updateSimulationState(updatedState);
+                        SimulationState internal = ((RandomAgent) myAgent).getSimulationState();
+                        System.out.println("posizione interna" + internal.getPosition().toString());
+                    } catch (UnreadableException e) {
+                        // Handle deserialization error
+                        e.printStackTrace();
+                    }
                 
-                // Create PROPOSE/request-action message with the requested next Position
-                ACLMessage proposeMsg = new ACLMessage(ACLMessage.PROPOSE);
-                proposeMsg.setSender(myAgent.getAID());
-                proposeMsg.addReceiver(senderAID); // Assuming you have the AID of the Simulator Agent
-                proposeMsg.setConversationId("request-action");
-                proposeMsg.setContent(nextPosition.toString());
-                
-                // Send the proposeMsg
-                myAgent.send(proposeMsg);
-            } else if (msg.getPerformative() == ACLMessage.INFORM && msg.getConversationId().equals("update-state")) {
-                // Parse SimulationState from the message content and update internal perception
-                // The simulatoragent inform about the new state! Take it for the other agents!                
-                //SimulationState updatedState = parseSimulationState(msg.getContent());
-                //((RandomAgent) myAgent).updatePerception(updatedState);
-                
-                // Process the updated state (if needed)
+                }
+            } else{
+                block(); // Wait for messages
             }
-        } else{
-           System.out.println("fefe");; // Wait for messages
+            
+        } catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
+
+    
 
     //private SimulationState parseSimulationState(String content) {
         // Implement logic to parse SimulationState from the message content

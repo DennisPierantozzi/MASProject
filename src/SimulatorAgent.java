@@ -21,8 +21,8 @@ public class SimulatorAgent extends Agent {
     
     // Simulation parameters
     int numParticipants = 2;
-    int numSimRounds = 1000;
-    int numStepsMapReDist = 10; // If equals numSimRounds, implies no map rescheduling
+    int numSimRounds = 4;
+    int numStepsMapReDist = 4; // If equals numSimRounds, implies no map rescheduling
     
     // Simulation state
     public boolean simulationStarted = false;
@@ -91,8 +91,7 @@ public class SimulatorAgent extends Agent {
                     System.out.println(getAID().getLocalName()+": SIMULATION CAN START!!!");
 
                     simulationStarted = true;
-                    
-                    addBehaviour(new SimulationManagerBehaviour());
+                    addBehaviour(new SimulationManagerBehaviour(5000));
                     
                 } else
                 {

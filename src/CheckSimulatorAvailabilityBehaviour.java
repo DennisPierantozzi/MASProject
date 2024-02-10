@@ -4,8 +4,10 @@ import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
 
 public class CheckSimulatorAvailabilityBehaviour extends TickerBehaviour{
 
@@ -31,6 +33,41 @@ public class CheckSimulatorAvailabilityBehaviour extends TickerBehaviour{
                 System.out.println("Simulator Agent found!");
                 // Here I have to ask to play!!
                 sendJoinSimulationRequest(result[0].getName());
+
+                // Wait for reply
+                ACLMessage reply = myAgent.blockingReceive(MessageTemplate.or(
+                        MessageTemplate.MatchPerformative(ACLMessage.AGREE),
+                        MessageTemplate.MatchPerformative(ACLMessage.REFUSE)),
+                        5000); // Timeout after 5 seconds
+
+                if (reply != null) {
+                    // Process the reply
+                    if (reply.getPerformative() == ACLMessage.AGREE) {
+                        // Simulator Agent agreed to join simulation
+                        System.out.println("Simulator Agent agreed to join simulation");
+                        try {
+                            SimulationState initialState = (SimulationState) reply.getContentObject();
+                            ((RandomAgent) myAgent).updateSimulationState(initialState);
+                            SimulationState state = ((RandomAgent) myAgent).getSimulationState();
+                            System.out.println(state.toString());
+                        } catch (Exception e) {
+                            System.out.println("Simulation State not readable");
+                        }
+                        // Handle further actions if needed
+                    } else if (reply.getPerformative() == ACLMessage.REFUSE) {
+                        // Simulator Agent refused to join simulation
+                        System.out.println("Simulator Agent refused to join simulation");
+                        // Handle further actions if needed
+                    }
+                } else {
+                    // Timeout occurred, no reply received
+                    System.out.println("Timeout: No reply received from Simulator Agent");
+                    // Handle further actions if needed
+                }
+        
+                //((RandomAgent) myAgent).addBehaviour(new WaitForRequestActionBehaviour());
+                stop();
+
             } else {
                 System.out.println("Simulator Agent not found.");
                 // Add your logic here if Simulator Agent is not found

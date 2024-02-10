@@ -27,4 +27,11 @@ public class SimulationState implements Serializable {
         return _position;
     }
 
+    @Override
+    public String toString() {
+        return "SimulationState{" +
+                "position=" + _position +
+                '}';
+    }
+
 }
