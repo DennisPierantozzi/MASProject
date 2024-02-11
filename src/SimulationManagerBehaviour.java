@@ -167,7 +167,7 @@ public class SimulationManagerBehaviour extends Behaviour {
         }
         else 
         {
-            System.out.println("posizione non valida pirla!");
+            System.out.println("INVALID POSITION");
             // invalid position, it remains where it is
             newPosition = participant.getSimulationState().getPosition();
         }

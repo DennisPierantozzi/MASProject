@@ -26,20 +26,7 @@ public class WaitForRequestActionBehaviour extends CyclicBehaviour {
                     
                     // Send the proposeMsg
                     myAgent.send(proposeMsg);
-                } else if (msg.getPerformative() == ACLMessage.INFORM && msg.getConversationId().equals("update-state")) {
-                    
-                    // update the simulationState of the agent
-                    try {
-                        SimulationState updatedState = (SimulationState) msg.getContentObject();
-                        ((RandomAgent) myAgent).updateSimulationState(updatedState);
-                        SimulationState internal = ((RandomAgent) myAgent).getSimulationState();
-                        System.out.println("posizione interna" + internal.getPosition().toString());
-                    } catch (UnreadableException e) {
-                        // Handle deserialization error
-                        e.printStackTrace();
-                    }
-                
-                }
+                } 
             } else{
                 block(); // Wait for messages
             }
