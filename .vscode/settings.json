@@ -3,6 +3,7 @@
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
-        "c:\\jade\\jade\\lib\\jade.jar"
+        "c:\\jade\\jade\\lib\\jade.jar",
+        "c:\\Users\\Utente\\eclipse\\java-2020-092\\JADE-all-4.6.0\\JADE-bin-4.6.0\\jade\\lib\\jade.jar"
     ]
 }

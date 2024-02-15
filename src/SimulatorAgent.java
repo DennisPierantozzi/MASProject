@@ -20,7 +20,7 @@ public class SimulatorAgent extends Agent {
     int numTraps = 10;
     
     // Simulation parameters
-    int numParticipants = 2;
+    int numParticipants = 1;
     int numSimRounds = 4;
     int numStepsMapReDist = 4; // If equals numSimRounds, implies no map rescheduling
     
@@ -35,10 +35,12 @@ public class SimulatorAgent extends Agent {
         // Initialize map according to parameters
         try{
             _map = new Map(mapSize, mapSize, numItems, numTraps);
+            System.out.println(_map);
         } catch(Exception e) {
             e.printStackTrace();
         }
         _map.show();
+        
         
         // Register in Service Facilitator (yellow pages)
         DFAgentDescription dfd = new DFAgentDescription();
@@ -119,6 +121,7 @@ public class SimulatorAgent extends Agent {
 
     public Map getCurrentMap()
     {
+        System.out.println(_map);
         return _map;
     }
 

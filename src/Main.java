@@ -24,13 +24,20 @@ public class Main {
             AgentController simulatorAgentController = mainContainer.createNewAgent("simulatorAgent", "SimulatorAgent", null);
             simulatorAgentController.start();
 
+            AgentController firstAgentController = mainContainer.createNewAgent("firstAgent1", "FirstAgent", new Object[]{5});
+            firstAgentController.start();
+
             // Start the first RandomAgent
+            /* 
             AgentController randomAgent1Controller = mainContainer.createNewAgent("randomAgent1", "RandomAgent", new Object[]{5}); // Pass commitment parameter 5
             randomAgent1Controller.start();
+            
 
             // Start the second RandomAgent
             AgentController randomAgent2Controller = mainContainer.createNewAgent("randomAgent2", "RandomAgent", new Object[]{10}); // Pass commitment parameter 10
             randomAgent2Controller.start();
+            */
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -3,7 +3,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
-public class WaitForRequestActionBehaviour extends CyclicBehaviour {
+public class WaitForRequestActionGoal_Trap extends CyclicBehaviour {
 
 
     @Override
@@ -16,14 +16,15 @@ public class WaitForRequestActionBehaviour extends CyclicBehaviour {
                 AID senderAID = msg.getSender();
                 if (msg.getPerformative() == ACLMessage.REQUEST && msg.getConversationId().equals("request-action")) {
                     // Calculate random position
-                    Position nextPosition = ((RandomAgent) myAgent).calculateRandomPosition();
+                    //Position nextPosition = ((RandomAgent) myAgent).calculateRandomPosition();
+                    Position sos = ((FirstAgent) myAgent).NearestItem();
                     
                     // Create PROPOSE/request-action message with the requested next Position
                     ACLMessage proposeMsg = msg.createReply();
                     proposeMsg.setPerformative(ACLMessage.PROPOSE);
                     proposeMsg.addReceiver(senderAID); // Assuming you have the AID of the Simulator Agent
                     proposeMsg.setInReplyTo(msg.getReplyWith());
-                    proposeMsg.setContentObject(nextPosition);
+                    proposeMsg.setContentObject(sos);
                     
                     // Send the proposeMsg
                     myAgent.send(proposeMsg);

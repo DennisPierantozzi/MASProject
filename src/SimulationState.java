@@ -18,7 +18,7 @@ public class SimulationState implements Serializable {
     }
 
     public Map getMap()
-    {
+    {   
         return _map;
     }
 
@@ -26,6 +26,8 @@ public class SimulationState implements Serializable {
     {
         return _position;
     }
+
+    
 
     @Override
     public String toString() {
