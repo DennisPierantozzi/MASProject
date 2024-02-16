@@ -13,30 +13,27 @@ public class Main {
         //profile.setParameter(Profile.CONTAINER_NAME, "MainContainer");
         //profile.setParameter(Profile.GUI, "true");
         AgentContainer mainContainer = runtime.createMainContainer(profile);
-        System.out.println("ere");
 
         try {
-            System.out.println("eere");
             //gui to shut down the entire system !!!!!!!
             AgentController rma = mainContainer.createNewAgent("rma", "jade.tools.rma.rma", new Object[0]);
             rma.start();
             //Start the SimulatorAgent
             AgentController simulatorAgentController = mainContainer.createNewAgent("simulatorAgent", "SimulatorAgent", null);
             simulatorAgentController.start();
-
-            AgentController firstAgentController = mainContainer.createNewAgent("firstAgent1", "FirstAgent", new Object[]{5});
-            firstAgentController.start();
+/*
+            AgentController greedyAgentController = mainContainer.createNewAgent("greedyAgent", "GreedyAgent", new Object[]{5});
+            greedyAgentController.start();
 
             // Start the first RandomAgent
-            /* 
             AgentController randomAgent1Controller = mainContainer.createNewAgent("randomAgent1", "RandomAgent", new Object[]{5}); // Pass commitment parameter 5
             randomAgent1Controller.start();
             
-
-            // Start the second RandomAgent
-            AgentController randomAgent2Controller = mainContainer.createNewAgent("randomAgent2", "RandomAgent", new Object[]{10}); // Pass commitment parameter 10
-            randomAgent2Controller.start();
-            */
+*/
+            // Start the backToCenter Agent
+            AgentController backToCenterAgentController = mainContainer.createNewAgent("backtocenterAgent", "BackToCenterAgent", new Object[]{5}); // Pass commitment parameter 10
+            backToCenterAgentController.start();
+            
 
         } catch (Exception e) {
             e.printStackTrace();

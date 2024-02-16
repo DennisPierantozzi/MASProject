@@ -47,9 +47,7 @@ public class CheckSimulatorAvailabilityBehaviour extends TickerBehaviour{
                         System.out.println("Simulator Agent agreed to join simulation");
                         try {
                             SimulationState initialState = (SimulationState) reply.getContentObject();
-                            ((RandomAgent) myAgent).updateSimulationState(initialState);
-                            SimulationState state = ((RandomAgent) myAgent).getSimulationState();
-                            System.out.println(state.toString());
+                            ((AgentUtils) myAgent).updateSimulationState(initialState);
                         } catch (Exception e) {
                             System.out.println("Simulation State not readable");
                         }
@@ -65,7 +63,6 @@ public class CheckSimulatorAvailabilityBehaviour extends TickerBehaviour{
                     // Handle further actions if needed
                 }
         
-                //((RandomAgent) myAgent).addBehaviour(new WaitForRequestActionBehaviour());
                 stop();
 
             } else {

@@ -19,7 +19,6 @@ public class SimulationManagerBehaviour extends Behaviour {
     public void action() {
 
         LinkedList<Participant> participants = ((SimulatorAgent)myAgent).getParticipants();
-        System.out.printf("ora è attaccato il simulator behaviour");
         if (System.currentTimeMillis() - startTime >= delay) {
         
         while (!((SimulatorAgent)myAgent).simulationComplete())
@@ -47,7 +46,7 @@ public class SimulationManagerBehaviour extends Behaviour {
                 /* agent totally stops until receiving this type of message or no response in 10s, 
                    then assuming opportunity for response passed */
                 
-                ACLMessage msg = myAgent.blockingReceive(mt, 10000); 
+                ACLMessage msg = myAgent.blockingReceive(mt, 60000); 
                 if (msg != null)
                 {
                     // Process action

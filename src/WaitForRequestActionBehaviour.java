@@ -11,19 +11,28 @@ public class WaitForRequestActionBehaviour extends CyclicBehaviour {
 
         try {
             ACLMessage msg = myAgent.receive();
-            System.out.println(msg);
             if (msg != null) {
                 AID senderAID = msg.getSender();
                 if (msg.getPerformative() == ACLMessage.REQUEST && msg.getConversationId().equals("request-action")) {
-                    // Calculate random position
-                    Position nextPosition = ((RandomAgent) myAgent).calculateRandomPosition();
-                    
+
                     // Create PROPOSE/request-action message with the requested next Position
                     ACLMessage proposeMsg = msg.createReply();
                     proposeMsg.setPerformative(ACLMessage.PROPOSE);
                     proposeMsg.addReceiver(senderAID); // Assuming you have the AID of the Simulator Agent
                     proposeMsg.setInReplyTo(msg.getReplyWith());
-                    proposeMsg.setContentObject(nextPosition);
+
+                    if (myAgent instanceof GreedyAgent) {
+                        Position nextPosition = ((GreedyAgent) myAgent).computeNextPosition();
+                        proposeMsg.setContentObject(nextPosition);
+                    } else if (myAgent instanceof RandomAgent) {
+                        Position nextPosition = ((RandomAgent) myAgent).computeNextPosition();
+                        proposeMsg.setContentObject(nextPosition);
+                    } else if (myAgent instanceof BackToCenterAgent) {
+                        Position nextPosition = ((BackToCenterAgent) myAgent).computeNextPosition();
+                        proposeMsg.setContentObject(nextPosition);
+                    }
+
+                    
                     
                     // Send the proposeMsg
                     myAgent.send(proposeMsg);

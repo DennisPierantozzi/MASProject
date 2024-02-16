@@ -21,8 +21,8 @@ public class SimulatorAgent extends Agent {
     
     // Simulation parameters
     int numParticipants = 1;
-    int numSimRounds = 4;
-    int numStepsMapReDist = 4; // If equals numSimRounds, implies no map rescheduling
+    int numSimRounds = 10;
+    int numStepsMapReDist = 10; // If equals numSimRounds, implies no map rescheduling
     
     // Simulation state
     public boolean simulationStarted = false;
@@ -35,7 +35,6 @@ public class SimulatorAgent extends Agent {
         // Initialize map according to parameters
         try{
             _map = new Map(mapSize, mapSize, numItems, numTraps);
-            System.out.println(_map);
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -121,7 +120,6 @@ public class SimulatorAgent extends Agent {
 
     public Map getCurrentMap()
     {
-        System.out.println(_map);
         return _map;
     }
 

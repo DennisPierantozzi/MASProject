@@ -1,3 +1,4 @@
+import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -12,9 +13,9 @@ public class WaitForInformBehaviour extends CyclicBehaviour {
                 if (msg.getPerformative() == ACLMessage.INFORM && msg.getConversationId().equals("update-state")) {
                     try {
                         SimulationState updatedState = (SimulationState) msg.getContentObject();
-                        ((RandomAgent) myAgent).updateSimulationState(updatedState);
-                        SimulationState internal = ((RandomAgent) myAgent).getSimulationState();
-                        System.out.println("UPDATE POSIZIONE FATTO:" + internal.getPosition().toString());
+                        ((AgentUtils) myAgent).updateSimulationState(updatedState);
+                        SimulationState internal = ((AgentUtils) myAgent).getSimulationState();
+                        System.out.println("Position updated:" + internal.getPosition().toString());
                     } catch (UnreadableException e) {
                         e.printStackTrace();
                     }

@@ -25,6 +25,7 @@ public class RegisterParticipantsBehaviour extends CyclicBehaviour {
                 } else {
                     reply.setPerformative(ACLMessage.AGREE);
                     SimulationState initialState = ((SimulatorAgent)myAgent).addParticipant(requester, agentCommitment);
+                    System.out.println("inital position:" + initialState.getPosition().toString());
                     reply.setContentObject(initialState);
                 }
                 
