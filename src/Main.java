@@ -21,15 +21,14 @@ public class Main {
             //Start the SimulatorAgent
             AgentController simulatorAgentController = mainContainer.createNewAgent("simulatorAgent", "SimulatorAgent", null);
             simulatorAgentController.start();
-/*
+
             AgentController greedyAgentController = mainContainer.createNewAgent("greedyAgent", "GreedyAgent", new Object[]{5});
             greedyAgentController.start();
-
+            
             // Start the first RandomAgent
             AgentController randomAgent1Controller = mainContainer.createNewAgent("randomAgent1", "RandomAgent", new Object[]{5}); // Pass commitment parameter 5
             randomAgent1Controller.start();
-            
-*/
+
             // Start the backToCenter Agent
             AgentController backToCenterAgentController = mainContainer.createNewAgent("backtocenterAgent", "BackToCenterAgent", new Object[]{5}); // Pass commitment parameter 10
             backToCenterAgentController.start();

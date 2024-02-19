@@ -48,22 +48,20 @@ public class CheckSimulatorAvailabilityBehaviour extends TickerBehaviour{
                         try {
                             SimulationState initialState = (SimulationState) reply.getContentObject();
                             ((AgentUtils) myAgent).updateSimulationState(initialState);
+                            stop();
+
                         } catch (Exception e) {
                             System.out.println("Simulation State not readable");
                         }
-                        // Handle further actions if needed
                     } else if (reply.getPerformative() == ACLMessage.REFUSE) {
                         // Simulator Agent refused to join simulation
                         System.out.println("Simulator Agent refused to join simulation");
-                        // Handle further actions if needed
                     }
                 } else {
                     // Timeout occurred, no reply received
                     System.out.println("Timeout: No reply received from Simulator Agent");
                     // Handle further actions if needed
                 }
-        
-                stop();
 
             } else {
                 System.out.println("Simulator Agent not found.");
