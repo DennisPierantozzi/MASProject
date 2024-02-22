@@ -25,6 +25,17 @@ public class BackToCenterAgent extends AgentUtils {
     private int stepsDone;
     private final int backToCenterRate = 2; //at the 20th step must be in the center
 
+    //in che zona sono
+    //ci sono item nella zona
+        //[si]
+        // qual è l'item più vicino a me nella zona
+        // performa A* star per arrivarci
+        //[no]
+        // controlla la zona con più item
+        // performa A* star per la cella più vicina della nuova zona
+    
+
+
 
     @Override
     protected void setup() {
@@ -98,8 +109,10 @@ public class BackToCenterAgent extends AgentUtils {
                 int tentativeCost = current.getCost() + 1; // Cost to move to the neighbor
                 
                 // Add neighbor to the queue with its total cost
-                queue.add(new Node(neighbor, tentativeCost, tentativeCost + weightedManhattanDistance(neighbor, goal), current));
-            }
+                if(!(simulationState.getMap().getTrapsPositions().contains(neighbor))){
+                    queue.add(new Node(neighbor, tentativeCost, tentativeCost + weightedManhattanDistance(neighbor, goal), current));
+                }
+            }   
         }
         
         // If no path is found, return an empty list

@@ -30,7 +30,7 @@ public class Main {
             //randomAgent1Controller.start();
 
             // Start the backToCenter Agent
-            //AgentController backToCenterAgentController = mainContainer.createNewAgent("backtocenterAgent", "BackToCenterAgent", new Object[]{5}); // Pass commitment parameter 10
+            //AgentController backToCenterAgentController = mainContainer.createNewAgent("backtocenterAgent", "BackToCenterAgent", new Object[]{10}); // Pass commitment parameter 10
             //backToCenterAgentController.start();
             
 
