@@ -15,38 +15,39 @@ import jade.core.Agent;
  */
 
 public class BackToCenterAgent extends AgentUtils {
-    private CountDownLatch stateUpdatedLatch = new CountDownLatch(1);
+
+    private int trapWeight = 200;
 
     private boolean policyToCenter = true;
     private boolean goingToCenter = false;
 
-    private int commitment;
+    private int commitment; 
     private int stepsDone;
     private final int backToCenterRate = 2; //at the 20th step must be in the center
 
 
-        @Override
-        protected void setup() {
-            // Get commitment from command line arguments
-            Object[] args = getArguments();
-            if (args != null && args.length > 0) {
-                int commitment = (Integer) args[0];
-                this.commitment = commitment;
-                if(commitment<10) {
-                    policyToCenter = false;
-                }
-                
-                // Add behavior to periodically check for Simulator Agent availability every 5 seconds
-                addBehaviour(new CheckSimulatorAvailabilityBehaviour(this, 5000, commitment));
-                addBehaviour(new WaitForRequestActionBehaviour());
-                //addBehaviour(new WaitForInformBehaviour());
-                addBehaviour(new WaitForSimulationCompleteBehaviour());
-
-            } else {
-                System.err.println("ParticipantAgent: No commitment provided.");
-                doDelete(); // Terminate the agent if commitment is not provided
+    @Override
+    protected void setup() {
+        // Get commitment from command line arguments
+        Object[] args = getArguments();
+        if (args != null && args.length > 0) {
+            int commitment = (Integer) args[0];
+            this.commitment = commitment;
+            if(commitment<10) {
+                policyToCenter = false;
             }
+            
+            // Add behavior to periodically check for Simulator Agent availability every 5 seconds
+            addBehaviour(new CheckSimulatorAvailabilityBehaviour(this, 5000, commitment));
+            addBehaviour(new WaitForRequestActionBehaviour());
+            //addBehaviour(new WaitForInformBehaviour());
+            addBehaviour(new WaitForSimulationCompleteBehaviour());
+
+        } else {
+            System.err.println("ParticipantAgent: No commitment provided.");
+            doDelete(); // Terminate the agent if commitment is not provided
         }
+    }
 
     // Method to create a path to come back to the center of the map
     public LinkedList<Position> findPathToCenter(Map map, Position currentPosition) {
@@ -71,7 +72,7 @@ public class BackToCenterAgent extends AgentUtils {
         PriorityQueue<Node> queue = new PriorityQueue<>(Comparator.comparingInt(Node::getTotalCost)); // Priority queue for open list
         
         // Add starting node to the queue
-        queue.add(new Node(start, 0, manhattanDistance(start, goal)));
+        queue.add(new Node(start, 0, weightedManhattanDistance(start, goal)));
 
         while (!queue.isEmpty()) {
             Node current = queue.poll(); // Get the node with the lowest cost
@@ -97,7 +98,7 @@ public class BackToCenterAgent extends AgentUtils {
                 int tentativeCost = current.getCost() + 1; // Cost to move to the neighbor
                 
                 // Add neighbor to the queue with its total cost
-                queue.add(new Node(neighbor, tentativeCost, tentativeCost + manhattanDistance(neighbor, goal), current));
+                queue.add(new Node(neighbor, tentativeCost, tentativeCost + weightedManhattanDistance(neighbor, goal), current));
             }
         }
         
@@ -105,14 +106,39 @@ public class BackToCenterAgent extends AgentUtils {
         return new LinkedList<>();
     }
 
-    public int manhattanDistance(Position from, Position to) {
-        return Math.abs(from.x - to.x) + Math.abs(from.y - to.y);
+    public int weightedManhattanDistance(Position from, Position to) {
+        
+        int manhattanDist = Math.abs(from.x - to.x) + Math.abs(from.y - to.y);
+    
+        // Adjust the distance based on the weights of the cells
+        int weightedDist = manhattanDist;
+        
+        // Check if the destination cell contains a trap or obstacle
+        if (simulationState.getMap().isTrapPosition(to)) {
+            weightedDist += trapWeight;
+        }
+        
+        return weightedDist;
     }
 
-
+    @Override
     public Position computeNextPosition() {
-        LinkedList<Position> pathToCenter = findPathToCenter(simulationState.getMap(), simulationState.getPosition());
-        if(policyToCenter && pathToCenter.size() > 1 && goingToCenter) {
+        //LinkedList<Position> pathToCenter = findPathToCenter(simulationState.getMap(), simulationState.getPosition());
+        Position closestPrize = findClosestPrize(simulationState.getPosition());
+        if(closestPrize!=null){
+            return AStarSearch(simulationState.getMap(), simulationState.getPosition(), closestPrize).get(1);
+        }
+        else if(!(simulationState.getMap().isTrapPosition(simulationState.getPosition()))){
+            // if there are no prizes and the actual position is safe, stay
+            return simulationState.getPosition();
+        }
+        else {
+            //else do
+            return doRandomAction();
+        }
+        
+        
+        /*if(policyToCenter && pathToCenter.size() > 1 && goingToCenter) {
             System.out.println("tocenter:" + findPathToCenter(simulationState.getMap(), simulationState.getPosition()).toString());
             return pathToCenter.get(1);
         }
@@ -120,7 +146,13 @@ public class BackToCenterAgent extends AgentUtils {
             goingToCenter = false;
             stepsDone = 1;
             System.out.println(AStarSearch(simulationState.getMap(), simulationState.getPosition(), findClosestPrize(simulationState.getPosition())).toString());
-            return AStarSearch(simulationState.getMap(), simulationState.getPosition(), findClosestPrize(simulationState.getPosition())).get(1);
+            Position closestPrize = findClosestPrize(simulationState.getPosition());
+            if(closestPrize!=null){
+                return AStarSearch(simulationState.getMap(), simulationState.getPosition(), findClosestPrize(simulationState.getPosition())).get(1);
+            }
+            else {
+                return doRandomAction();
+            }
         }
         else {
             if(stepsDone == commitment*backToCenterRate)
@@ -131,7 +163,7 @@ public class BackToCenterAgent extends AgentUtils {
             stepsDone++;
             System.out.println(AStarSearch(simulationState.getMap(), simulationState.getPosition(), findClosestPrize(simulationState.getPosition())).toString());
             return AStarSearch(simulationState.getMap(), simulationState.getPosition(), findClosestPrize(simulationState.getPosition())).get(1);
-        }
+        }*/
 
     }
 

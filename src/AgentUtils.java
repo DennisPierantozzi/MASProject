@@ -1,3 +1,6 @@
+import java.util.LinkedList;
+import java.util.Random;
+
 import jade.core.Agent;
 
 public class AgentUtils extends Agent {
@@ -30,5 +33,13 @@ public class AgentUtils extends Agent {
         return closestPrize;
     }
 
-    // Other common functionalities related to simulation state management
+    public Position doRandomAction() {
+        MapNavigator navigator = new MapNavigator();
+        LinkedList<Position> possiblePos = new LinkedList<Position>();
+        possiblePos = navigator.getNextPossiblePositions(simulationState.getMap(), simulationState.getPosition());
+        Random rand = new Random();
+        int randomIndex = rand.nextInt(possiblePos.size()); // Generate a random index
+        return possiblePos.get(randomIndex);
+    }
+
 }

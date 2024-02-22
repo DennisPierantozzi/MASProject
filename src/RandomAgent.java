@@ -10,6 +10,7 @@ public class RandomAgent extends AgentUtils {
             Object[] args = getArguments();
             if (args != null && args.length > 0) {
                 int commitment = (Integer) args[0];
+                //int commitment = Integer.valueOf((String) args[0]);
 
                 // Add behavior to periodically check for Simulator Agent availability every 5 seconds
                 addBehaviour(new CheckSimulatorAvailabilityBehaviour(this, 5000, commitment));
@@ -23,6 +24,7 @@ public class RandomAgent extends AgentUtils {
             }
         }
 
+        /* 
         @Override
         public Position computeNextPosition() {
             MapNavigator navigator = new MapNavigator();
@@ -32,6 +34,6 @@ public class RandomAgent extends AgentUtils {
             int randomIndex = rand.nextInt(possiblePos.size()); // Generate a random index
             return possiblePos.get(randomIndex);
         }
-
+        */
 
 }

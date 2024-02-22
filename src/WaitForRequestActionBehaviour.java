@@ -29,11 +29,9 @@ public class WaitForRequestActionBehaviour extends CyclicBehaviour {
                 switch (msg.getConversationId()) {
                     case "request-action":
                         handleRequestAction(msg);
-                        // Code for handling request-action messages goes here
                         break;
                     case "update-state":
                         handleUpdateState(msg);
-                        // Code for handling update-state messages goes here
                         break;
                     default:
                         // Code for handling unexpected messages goes here
@@ -78,7 +76,7 @@ public class WaitForRequestActionBehaviour extends CyclicBehaviour {
                         Position nextPosition = ((GreedyAgent) myAgent).computeNextPosition();
                         proposeMsg.setContentObject(nextPosition);
                     } else if (myAgent instanceof RandomAgent) {
-                        Position nextPosition = ((RandomAgent) myAgent).computeNextPosition();
+                        Position nextPosition = ((RandomAgent) myAgent).doRandomAction();
                         proposeMsg.setContentObject(nextPosition);
                     } else if (myAgent instanceof BackToCenterAgent) {
                         Position nextPosition = ((BackToCenterAgent) myAgent).computeNextPosition();

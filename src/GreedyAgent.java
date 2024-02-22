@@ -12,7 +12,6 @@ import jade.util.leap.List;
 public class GreedyAgent extends AgentUtils{
 
     @Override
-
     protected void setup() {
         // Get commitment from command line arguments
         Object[] args = getArguments();
@@ -37,21 +36,38 @@ public class GreedyAgent extends AgentUtils{
         LinkedList<Position> trapPositions = simulationState.getMap().getTrapsPositions();
         Position actualPosition = simulationState.getPosition();
         Position closestPrize = findClosestPrize(actualPosition);
+
         if (closestPrize != null) {
-            // Move towards the closest prize while avoiding traps (simplified logic)
-            if (closestPrize.x > actualPosition.x && !trapPositions.contains(new Position(actualPosition.x + 1, actualPosition.y))) {
-                actualPosition.x++;
-            } else if (closestPrize.x < actualPosition.x && !trapPositions.contains(new Position(actualPosition.x - 1, actualPosition.y))) {
-                actualPosition.x--;
-            } else if (closestPrize.y > actualPosition.y && !trapPositions.contains(new Position(actualPosition.x, actualPosition.y + 1))) {
-                actualPosition.y++;
-            } else if (closestPrize.y < actualPosition.y && !trapPositions.contains(new Position(actualPosition.x, actualPosition.y - 1))) {
-                actualPosition.y--;
+            int deltaX = Integer.compare(closestPrize.x, actualPosition.x);
+            int deltaY = Integer.compare(closestPrize.y, actualPosition.y);
+
+            // Check if moving along the x-axis or y-axis is more beneficial
+            if (Math.abs(deltaX) >= Math.abs(deltaY)) {
+                // Move along the x-axis
+                if (isValidMove(actualPosition.x + deltaX, actualPosition.y, trapPositions)) {
+                    actualPosition.x += deltaX;
+                } else if (isValidMove(actualPosition.x, actualPosition.y + deltaY, trapPositions)) {
+                    // If moving along the x-axis is blocked, try moving along the y-axis
+                    actualPosition.y += deltaY;
+                }
+            } else {
+                // Move along the y-axis
+                if (isValidMove(actualPosition.x, actualPosition.y + deltaY, trapPositions)) {
+                    actualPosition.y += deltaY;
+                } else if (isValidMove(actualPosition.x + deltaX, actualPosition.y, trapPositions)) {
+                    // If moving along the y-axis is blocked, try moving along the x-axis
+                    actualPosition.x += deltaX;
+                }
             }
         }
+        
         return actualPosition;
     }
-
     
+    // Check if the move is valid (not blocked by traps)
+    private boolean isValidMove(int x, int y, LinkedList<Position> trapPositions) {
+        Position newPos = new Position(x, y);
+        return !trapPositions.contains(newPos) && simulationState.getMap().withinMapLimits(newPos);
+    }
    
 }
