@@ -1,3 +1,4 @@
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -23,7 +24,10 @@ public class AgentUtils extends Agent {
     public Position findClosestPrize(Position actualPosition) {
         Position closestPrize = null;
         double minDistance = Double.MAX_VALUE;
-        for (Position prize : simulationState.getMap().getItemPositions()) {
+        LinkedList<Position> itemsPosition = simulationState.getMap().getItemPositions();
+        itemsPosition.remove(actualPosition);
+
+        for (Position prize : itemsPosition) {
             double distance = Math.sqrt(Math.pow(prize.x - actualPosition.x, 2) + Math.pow(prize.y - actualPosition.y, 2));
             if (distance < minDistance) {
                 minDistance = distance;
@@ -40,6 +44,42 @@ public class AgentUtils extends Agent {
         Random rand = new Random();
         int randomIndex = rand.nextInt(possiblePos.size()); // Generate a random index
         return possiblePos.get(randomIndex);
+    }
+
+
+    // Node class for A* search
+    static class Node {
+        private final Position position;
+        private final int cost;
+        private final int totalCost;
+        private final Node parent;
+
+        public Node(Position position, int cost, int totalCost, Node parent) {
+            this.position = position;
+            this.cost = cost;
+            this.totalCost = totalCost;
+            this.parent = parent;
+        }
+
+        public Node(Position position, int cost, int totalCost) {
+            this(position, cost, totalCost, null);
+        }
+
+        public Position getPosition() {
+            return position;
+        }
+
+        public int getCost() {
+            return cost;
+        }
+
+        public int getTotalCost() {
+            return totalCost;
+        }
+
+        public Node getParent() {
+            return parent;
+        }
     }
 
 }

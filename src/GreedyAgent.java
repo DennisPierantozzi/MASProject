@@ -1,14 +1,8 @@
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Random;
-import java.util.concurrent.CountDownLatch;
-
-import jade.core.Agent;
-import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.SequentialBehaviour;
-import jade.lang.acl.MessageTemplate;
-import jade.tools.sniffer.Message;
-import jade.util.leap.ArrayList;
-import jade.util.leap.List;
+import java.util.PriorityQueue;
+import java.util.Set;
 
 public class GreedyAgent extends AgentUtils{
 
@@ -18,13 +12,10 @@ public class GreedyAgent extends AgentUtils{
         Object[] args = getArguments();
         if (args != null && args.length > 0) {
             int commitment = (Integer) args[0];
-            //int commitment = Integer.valueOf((String)(args[0]));
 
             // Add behavior to periodically check for Simulator Agent availability every 5 seconds
             addBehaviour(new CheckSimulatorAvailabilityBehaviour(this, 5000, commitment));
-
             addBehaviour(new TwoStepBehaviour(this));
-            
             addBehaviour(new WaitForSimulationCompleteBehaviour());
 
         } else {
@@ -33,50 +24,70 @@ public class GreedyAgent extends AgentUtils{
         }
     }
 
-    
-    @Override
-    public Position computeNextPosition() {
-        LinkedList<Position> trapPositions = simulationState.getMap().getTrapsPositions();
-        Position actualPosition = simulationState.getPosition();
-        Position closestPrize = findClosestPrize(actualPosition);
-
-        if(closestPrize == actualPosition) {
-            return doRandomAction();
+    private LinkedList<Position> reconstructPath(Node goal) {
+        LinkedList<Position> path = new LinkedList<>();
+        Node current = goal;
+        while (current != null) {
+            path.addFirst(current.getPosition());
+            current = current.getParent();
         }
+        path.removeFirst();
+        return path;
+    }
 
-        if (closestPrize != null) {
-            System.out.println("Il closest prize che voglio è in:" + closestPrize.toString());
-            System.out.println("Penso di essere in:" + actualPosition.toString());
-            int deltaX = Integer.compare(closestPrize.x, actualPosition.x);
-            int deltaY = Integer.compare(closestPrize.y, actualPosition.y);
+    private LinkedList<Position> AStarSearch(Map map, Position start, Position goal) {
+        Set<Position> visited = new HashSet<>(); // Set to keep track of visited positions
+        PriorityQueue<Node> queue = new PriorityQueue<>(Comparator.comparingInt(Node::getTotalCost)); // Priority queue for open list
+        
+        // Add starting node to the queue
+        queue.add(new Node(start, 0, manhattanDistance(start, goal)));
 
-            // Check if moving along the x-axis or y-axis is more beneficial
-            if (Math.abs(deltaX) >= Math.abs(deltaY)) {
-                // Move along the x-axis
-                if (isValidMove(actualPosition.x + deltaX, actualPosition.y, trapPositions)) {
-                    actualPosition.x += deltaX;
-                } else if (isValidMove(actualPosition.x, actualPosition.y + deltaY, trapPositions)) {
-                    // If moving along the x-axis is blocked, try moving along the y-axis
-                    actualPosition.y += deltaY;
+        while (!queue.isEmpty()) {
+            Node current = queue.poll(); // Get the node with the lowest cost
+            Position currentPosition = current.getPosition();
+            
+            // If the current position is the goal, return the path
+            if (currentPosition.equals(goal)) {
+                return reconstructPath(current);
+            }
+            
+            // Mark the current position as visited
+            visited.add(currentPosition);
+            
+            // Get neighbors of the current position
+            MapNavigator navigator = new MapNavigator();
+            LinkedList<Position> neighbors = navigator.getNextPossiblePositions(map, currentPosition);
+            for (Position neighbor : neighbors) {
+                // Skip if neighbor is already visited
+                if (visited.contains(neighbor)) {
+                    continue;
                 }
-            } else {
-                // Move along the y-axis
-                if (isValidMove(actualPosition.x, actualPosition.y + deltaY, trapPositions)) {
-                    actualPosition.y += deltaY;
-                } else if (isValidMove(actualPosition.x + deltaX, actualPosition.y, trapPositions)) {
-                    // If moving along the y-axis is blocked, try moving along the x-axis
-                    actualPosition.x += deltaX;
+                if(!simulationState.getMap().isTrapPosition(neighbor)){
+                    int tentativeCost = current.getCost() + 1; // Cost to move to the neighbor
+                    queue.add(new Node(neighbor, tentativeCost, tentativeCost + manhattanDistance(neighbor, goal), current));
                 }
             }
         }
         
-        return actualPosition;
+        // If no path is found, return an empty list
+        return new LinkedList<>();
     }
-    
-    // Check if the move is valid (not blocked by traps)
-    private boolean isValidMove(int x, int y, LinkedList<Position> trapPositions) {
-        Position newPos = new Position(x, y);
-        return !trapPositions.contains(newPos) && simulationState.getMap().withinMapLimits(newPos);
+
+    public int manhattanDistance(Position from, Position to) {
+        return Math.abs(from.x - to.x) + Math.abs(from.y - to.y);
     }
+
+    //
+    @Override
+    public Position computeNextPosition() {
+        try {
+            return AStarSearch(simulationState.getMap(), simulationState.getPosition(), findClosestPrize(simulationState.getPosition())).get(0);
+        }
+        catch(Exception e){
+            // Just in case
+            return doRandomAction();
+        }
+    }
+
    
 }

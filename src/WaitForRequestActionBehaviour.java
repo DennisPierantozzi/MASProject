@@ -42,8 +42,9 @@ public class WaitForRequestActionBehaviour extends Behaviour {
             } else if (myAgent instanceof RandomAgent) {
                 Position nextPosition = ((RandomAgent) myAgent).doRandomAction();
                 proposeMsg.setContentObject(nextPosition);
-            } else if (myAgent instanceof BackToCenterAgent) {
-                Position nextPosition = ((BackToCenterAgent) myAgent).computeNextPosition();
+            }
+            else if (myAgent instanceof RewardBasedAgent) {
+                Position nextPosition = ((RewardBasedAgent) myAgent).computeNextPosition();
                 proposeMsg.setContentObject(nextPosition);
             }
             // Send the proposeMsg

@@ -39,6 +39,9 @@ public class HandleUpdateBehaviour extends Behaviour {
         try {
             SimulationState updatedState = (SimulationState) informMsg.getContentObject();
             ((AgentUtils) myAgent).updateSimulationState(updatedState);
+            if (myAgent instanceof RewardBasedAgent) {
+                ((RewardBasedAgent) myAgent).updateRewards(updatedState.getPosition());
+            }
             System.out.println("Position updated:");
         } catch (Exception e) {
             e.printStackTrace();

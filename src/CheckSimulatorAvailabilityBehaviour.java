@@ -48,6 +48,10 @@ public class CheckSimulatorAvailabilityBehaviour extends TickerBehaviour{
                         try {
                             SimulationState initialState = (SimulationState) reply.getContentObject();
                             ((AgentUtils) myAgent).updateSimulationState(initialState);
+                            if (myAgent instanceof RewardBasedAgent) {
+                                ((RewardBasedAgent) myAgent).updateAuxMap(initialState.getMap());
+                                ((RewardBasedAgent) myAgent).updateLastPosition(initialState.getPosition());
+                            }
                             stop();
 
                         } catch (Exception e) {
