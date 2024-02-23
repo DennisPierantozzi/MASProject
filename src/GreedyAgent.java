@@ -4,6 +4,7 @@ import java.util.concurrent.CountDownLatch;
 
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.MessageTemplate;
 import jade.tools.sniffer.Message;
 import jade.util.leap.ArrayList;
@@ -17,11 +18,13 @@ public class GreedyAgent extends AgentUtils{
         Object[] args = getArguments();
         if (args != null && args.length > 0) {
             int commitment = (Integer) args[0];
+            //int commitment = Integer.valueOf((String)(args[0]));
 
             // Add behavior to periodically check for Simulator Agent availability every 5 seconds
             addBehaviour(new CheckSimulatorAvailabilityBehaviour(this, 5000, commitment));
-            addBehaviour(new WaitForRequestActionBehaviour());
-            //addBehaviour(new WaitForInformBehaviour());
+
+            addBehaviour(new TwoStepBehaviour(this));
+            
             addBehaviour(new WaitForSimulationCompleteBehaviour());
 
         } else {
@@ -37,7 +40,13 @@ public class GreedyAgent extends AgentUtils{
         Position actualPosition = simulationState.getPosition();
         Position closestPrize = findClosestPrize(actualPosition);
 
+        if(closestPrize == actualPosition) {
+            return doRandomAction();
+        }
+
         if (closestPrize != null) {
+            System.out.println("Il closest prize che voglio è in:" + closestPrize.toString());
+            System.out.println("Penso di essere in:" + actualPosition.toString());
             int deltaX = Integer.compare(closestPrize.x, actualPosition.x);
             int deltaY = Integer.compare(closestPrize.y, actualPosition.y);
 

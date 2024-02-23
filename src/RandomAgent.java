@@ -14,7 +14,7 @@ public class RandomAgent extends AgentUtils {
 
                 // Add behavior to periodically check for Simulator Agent availability every 5 seconds
                 addBehaviour(new CheckSimulatorAvailabilityBehaviour(this, 5000, commitment));
-                addBehaviour(new WaitForRequestActionBehaviour());
+                addBehaviour(new TwoStepBehaviour(this));
                 //addBehaviour(new WaitForInformBehaviour());
                 addBehaviour(new WaitForSimulationCompleteBehaviour());
 

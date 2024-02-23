@@ -17,7 +17,7 @@ public class SimulatorAgent extends Agent {
     // Map parameters
     int mapSize = 10;
     int numItems = 5;
-    int numTraps = 10;
+    int numTraps = 0;
     
     // Simulation parameters
     int numParticipants = 1;

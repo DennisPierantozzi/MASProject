@@ -2,7 +2,6 @@ import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
-import jade.wrapper.StaleProxyException;
 
 public class Main {
     public static void main(String[] args) {
@@ -22,7 +21,7 @@ public class Main {
             AgentController simulatorAgentController = mainContainer.createNewAgent("simulatorAgent", "SimulatorAgent", null);
             simulatorAgentController.start();
 
-            AgentController greedyAgentController = mainContainer.createNewAgent("greedyAgent", "GreedyAgent", new Object[]{5});
+            AgentController greedyAgentController = mainContainer.createNewAgent("greedyAgent", "GreedyAgent", new Object[]{1});
             greedyAgentController.start();
 
             // Start the first RandomAgent
@@ -30,7 +29,7 @@ public class Main {
             //randomAgent1Controller.start();
 
             // Start the backToCenter Agent
-            //AgentController backToCenterAgentController = mainContainer.createNewAgent("backtocenterAgent", "BackToCenterAgent", new Object[]{10}); // Pass commitment parameter 10
+            //AgentController backToCenterAgentController = mainContainer.createNewAgent("backtocenterAgent", "BackToCenterAgent", new Object[]{1}); // Pass commitment parameter 10
             //backToCenterAgentController.start();
             
 
